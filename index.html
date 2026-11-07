@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10100f">
+  <title>Creator HQ — BASTARD'S</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-mark">B<span>✳</span></div>
+      <p class="eyebrow">BASTARD'S CREATIVE INFRASTRUCTURE</p>
+      <h1>Creator <em>HQ.</em></h1>
+      <p class="muted auth-intro">Your creator network, under one roof.</p>
+      <form id="authForm">
+        <label>Email address<input id="authEmail" type="email" autocomplete="email" placeholder="you@agency.com" required></label>
+        <label>Password<input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters" minlength="6" required></label>
+        <button id="authSubmit" class="btn btn-primary full" type="submit">Sign in <span>↗</span></button>
+      </form>
+      <button id="toggleAuth" class="text-button">New here? Create an account</button>
+      <p id="authMessage" class="form-message" aria-live="polite"></p>
+      <p class="tiny muted">Private workspace · Secure sign-in</p>
+    </div>
+  </div>
+
+  <div id="app" class="app-shell hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-lockup">
+          <div class="brand-mark small">B<span>✳</span></div>
+          <div><strong>BASTARD'S</strong><small>CREATOR HQ</small></div>
+        </div>
+        <button id="closeSidebar" class="icon-button mobile-only" aria-label="Close menu">×</button>
+      </div>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="main-nav">
+        <button class="nav-item" data-view="overview"><span class="nav-icon">◫</span> Overview</button>
+        <button class="nav-item active" data-view="creators"><span class="nav-icon">◎</span> Creators <span id="navCreatorCount" class="nav-count">0</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="status-dot"></span><span>Workspace connected</span></div>
+        <button id="signOut" class="nav-item signout"><span class="nav-icon">↪</span> Sign out</button>
+        <div class="user-mini"><div class="avatar avatar-gold">B</div><div><strong id="userEmail">Your account</strong><small>Agency workspace</small></div></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button id="openSidebar" class="icon-button mobile-only" aria-label="Open menu">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumbCurrent">Creators</strong></div>
+        <div class="topbar-right"><span class="live-indicator"><i></i> LIVE DATABASE</span><div class="top-avatar">B</div></div>
+      </header>
+
+      <section id="overviewView" class="content-view hidden">
+        <div class="page-heading">
+          <div><p class="eyebrow">YOUR NETWORK AT A GLANCE</p><h1>Good to see you.</h1><p class="muted">A clearer view of the people behind your campaigns.</p></div>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><span>Total creators</span><strong id="overviewTotal">0</strong><small>In your database</small></article>
+          <article class="stat-card"><span>Onboarded</span><strong id="overviewOnboarded">0</strong><small>Ready to collaborate</small></article>
+          <article class="stat-card"><span>Available</span><strong id="overviewAvailable">0</strong><small>Currently available</small></article>
+          <article class="stat-card"><span>Average followers</span><strong id="overviewFollowers">0</strong><small>Across your network</small></article>
+        </div>
+        <div class="panel overview-panel"><div class="panel-heading"><div><p class="eyebrow">RECENT ADDITIONS</p><h2>Recently added</h2></div><button class="btn btn-secondary" id="goCreators">View database ↗</button></div><div id="recentCreators" class="recent-list"><div class="empty-state">Your creator network will appear here.</div></div></div>
+      </section>
+
+      <section id="creatorsView" class="content-view">
+        <div class="page-heading creator-heading">
+          <div><p class="eyebrow">THE PEOPLE BEHIND THE REACH</p><h1>Creator <em>database.</em></h1><p class="muted">Discover, organize and manage your creator network.</p></div>
+          <button id="addCreatorBtn" class="btn btn-primary"><span class="plus">＋</span> Add creator</button>
+        </div>
+        <div class="stats-grid compact-stats">
+          <article class="stat-card"><span>Total creators</span><strong id="totalCreators">0</strong><small>All records</small></article>
+          <article class="stat-card"><span>Onboarded</span><strong id="onboardedCreators">0</strong><small>Ready to work</small></article>
+          <article class="stat-card"><span>Available</span><strong id="availableCreators">0</strong><small>Open for campaigns</small></article>
+          <article class="stat-card"><span>Categories</span><strong id="categoryCount">0</strong><small>Creator niches</small></article>
+        </div>
+
+        <div class="database-panel">
+          <div class="database-toolbar">
+            <div class="view-switch"><button class="view-btn active" data-mode="table">▤ <span>Table</span></button><button class="view-btn" data-mode="gallery">▦ <span>Gallery</span></button></div>
+            <div class="toolbar-actions">
+              <div class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Search creators..." aria-label="Search creators"></div>
+              <select id="statusFilter" class="filter-select" aria-label="Filter by status"><option value="">All statuses</option><option>Prospect</option><option>Contacted</option><option>Onboarded</option><option>Inactive</option></select>
+              <select id="categoryFilter" class="filter-select" aria-label="Filter by category"><option value="">All categories</option></select>
+              <select id="sortSelect" class="filter-select sort-select" aria-label="Sort creators"><option value="newest">Recently added</option><option value="name">Name A–Z</option><option value="followers">Most followers</option><option value="rate">Lowest reel rate</option></select>
+              <button id="exportCsv" class="btn btn-secondary export-btn">↓ <span>Export</span></button>
+            </div>
+          </div>
+          <div class="results-line"><span id="resultCount">0 creators</span><span>YOUR PRIVATE DATABASE</span></div>
+          <div id="tableWrap" class="table-wrap">
+            <table>
+              <thead><tr><th>CREATOR</th><th>CATEGORY</th><th>PLATFORM</th><th>FOLLOWERS</th><th>ENGAGEMENT</th><th>REEL RATE</th><th>STATUS</th><th></th></tr></thead>
+              <tbody id="creatorTableBody"></tbody>
+            </table>
+          </div>
+          <div id="galleryGrid" class="gallery-grid hidden"></div>
+          <div id="emptyState" class="empty-state hidden"><div class="empty-symbol">◎</div><h3>No creators found.</h3><p>Try changing your filters or add your first creator.</p><button class="btn btn-primary" id="emptyAddBtn">Add your first creator</button></div>
+        </div>
+        <footer class="page-footer"><span>CREATOR HQ <b>·</b> BUILT FOR BASTARD'S</span><span id="lastUpdated">DATABASE READY</span></footer>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop hidden">
+    <section class="creator-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header"><div><p class="eyebrow">CREATOR RECORD</p><h2 id="modalTitle">Add a creator.</h2><p class="muted">Keep the details sharp. You can edit them anytime.</p></div><button id="closeModal" class="icon-button" aria-label="Close">×</button></div>
+      <form id="creatorForm">
+        <input id="creatorId" type="hidden">
+        <div class="form-section-title">BASIC INFORMATION</div>
+        <div class="form-grid">
+          <label class="span-2">Creator name *<input id="name" required maxlength="100" placeholder="e.g. Aanya Sharma"></label>
+          <label>Primary platform<select id="platform"><option>Instagram</option><option>YouTube</option><option>Facebook</option><option>Other</option></select></label>
+          <label>Username / handle<input id="handle" maxlength="100" placeholder="@username"></label>
+          <label class="span-2">Profile URL<input id="profileUrl" type="url" placeholder="https://instagram.com/username"></label>
+          <label>City<input id="city" maxlength="80" placeholder="Satna"></label>
+          <label>Category<select id="category"><option value="">Select category</option><option>Fashion</option><option>Food</option><option>Technology</option><option>Lifestyle</option><option>Travel</option><option>Beauty</option><option>Fitness</option><option>Education</option><option>Entertainment</option><option>Automobile</option><option>Photography</option><option>Other</option></select></label>
+        </div>
+        <div class="form-section-title">AUDIENCE & PERFORMANCE</div>
+        <div class="form-grid">
+          <label>Followers<input id="followers" type="number" min="0" step="1" placeholder="25000"></label>
+          <label>Average reel views<input id="avgViews" type="number" min="0" step="1" placeholder="12000"></label>
+          <label>Engagement rate (%)<input id="engagement" type="number" min="0" max="100" step="0.01" placeholder="4.5"></label>
+          <label>Language<input id="language" maxlength="100" placeholder="Hindi, English"></label>
+        </div>
+        <div class="form-section-title">PRICING · INR</div>
+        <div class="form-grid three-cols">
+          <label>Reel rate (₹)<input id="reelRate" type="number" min="0" step="1" placeholder="3000"></label>
+          <label>Story rate (₹)<input id="storyRate" type="number" min="0" step="1" placeholder="1000"></label>
+          <label>Post rate (₹)<input id="postRate" type="number" min="0" step="1" placeholder="2000"></label>
+        </div>
+        <div class="form-section-title">CONTACT & RELATIONSHIP</div>
+        <div class="form-grid">
+          <label>Phone / WhatsApp<input id="phone" type="tel" maxlength="30" placeholder="+91..."></label>
+          <label>Email<input id="email" type="email" maxlength="150" placeholder="creator@email.com"></label>
+          <label>Availability<select id="availability"><option>Available</option><option>Busy</option><option>Unavailable</option></select></label>
+          <label>Agency status<select id="status"><option>Prospect</option><option>Contacted</option><option>Onboarded</option><option>Inactive</option></select></label>
+          <label class="span-2">Notes<textarea id="notes" rows="3" maxlength="3000" placeholder="Audience quality, content style, collaboration notes..."></textarea></label>
+        </div>
+        <div id="formError" class="form-error" aria-live="polite"></div>
+        <div class="modal-actions"><button type="button" id="cancelModal" class="btn btn-secondary">Cancel</button><button id="saveCreator" type="submit" class="btn btn-primary">Save creator <span>↗</span></button></div>
+      </form>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="sidebarScrim" class="sidebar-scrim"></div>
+</body>
+</html>
